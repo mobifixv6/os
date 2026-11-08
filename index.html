@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
+    <title>مركز Mobifix للصيانة</title>
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#0f172a" />
+    <!-- Apple WebKit Standalone (Full Screen App, No Browser Toolbar) -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Mobifix Pro" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Mobifix Pro" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    <link rel="apple-touch-icon" href="./icon-512.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="./icon-512.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="./icon-512.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Reem+Kufi:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+      // Service Worker Registration
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').then(reg => {
+            console.log('SW Registered:', reg.scope);
+          }).catch(err => {
+            console.log('SW Registration failed:', err);
+          });
+        });
+      }
+
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Tajawal', 'sans-serif'],
+              kufi: ['Reem Kufi', 'sans-serif'],
+            },
+            colors: {
+              primary: '#0F766E', // Teal 700
+              secondary: '#F59E0B', // Amber 500
+            }
+          },
+        },
+      }
+      // معالجة عودة نظام iOS من الواتساب والمكالمات لمنع تجمد الشاشة البيضاء
+      window.addEventListener('pageshow', function() {
+        document.body.style.transform = 'translateZ(0)';
+        setTimeout(function() { document.body.style.transform = ''; }, 30);
+      });
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+          document.body.style.transform = 'translateZ(0)';
+          setTimeout(function() { document.body.style.transform = ''; }, 30);
+        }
+      });
+    </script>
+    <style>
+      :root {
+        --sat: env(safe-area-inset-top, 0px);
+        --sab: env(safe-area-inset-bottom, 0px);
+      }
+      .ios-safe-top {
+        padding-top: max(1.75rem, env(safe-area-inset-top, 0px)) !important;
+      }
+      .ios-safe-bottom {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px)) !important;
+      }
+
+      body {
+        font-family: 'Tajawal', sans-serif;
+        background-color: #f3f4f6;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* إخفاء شريط التمرير ولكن السماح بالتمرير */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* تأثيرات حركية */
+      .animate-scale-in {
+        animation: scaleIn 0.2s ease-out forwards;
+      }
+      @keyframes scaleIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+      
+      /* تخصيص شريط التمرير */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #cbd5e1;
+      }
+
+      /* حاوية الفاتورة المخصصة للطباعة الحرارية على الهاتف والكمبيوتر */
+      #dedicated-print-receipt {
+        position: fixed;
+        left: -9999px;
+        top: 0;
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      /* تنسيقات الطباعة الشاملة لجميع المتصفحات والطابعات الحرارية */
+      @media print {
+        @page {
+          margin: 0mm;
+          size: auto;
+        }
+        html, body, #root, body > #root > div {
+          margin: 0 !important;
+          padding: 0 !important;
+          background: #ffffff !important;
+          height: auto !important;
+          min-height: 0 !important;
+          max-height: none !important;
+          overflow: visible !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        body > #root > div > *:not(#dedicated-print-receipt) {
+          display: none !important;
+        }
+        #dedicated-print-receipt,
+        #dedicated-print-receipt * {
+          visibility: visible !important;
+        }
+        #dedicated-print-receipt {
+          display: flex !important;
+          position: static !important;
+          left: 0 !important;
+          top: 0 !important;
+          width: 100% !important;
+          max-width: 80mm !important;
+          margin: 0 auto !important;
+          padding: 2.5mm !important;
+          border: none !important;
+          box-shadow: none !important;
+          background: #ffffff !important;
+          color: #000000 !important;
+          z-index: 99999 !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+        .no-print, #dedicated-print-receipt .no-print, #dedicated-print-receipt .no-print * {
+          display: none !important;
+          visibility: hidden !important;
+        }
+      }
+    </style>
+
+<link rel="stylesheet" href="/index.css">
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/"
+  }
+}
+</script>
+  <script type="module" crossorigin src="./assets/index-CsQGTz4n.js"></script>
+</head>
+  <body>
+    <div id="root"></div>
+</body>
+</html>

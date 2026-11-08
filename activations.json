@@ -1,0 +1,39 @@
+{
+  "_comment": "ملف أكواد تفعيل المنظومة - أكواد مكونة من 5 خانات (حروف وأرقام إنجليزية)",
+  "M6B18": {
+    "duration": 6,
+    "unit": "months",
+    "client": "اشتراك 6 أشهر",
+    "status": "active"
+  },
+  "A7X92": {
+    "duration": 18,
+    "unit": "months",
+    "client": "اشتراك 18 شهراً",
+    "status": "active"
+  },
+  "GOLD9": {
+    "duration": 0,
+    "unit": "lifetime",
+    "client": "اشتراك ذهبي دائم - مدى الحياة",
+    "status": "active"
+  },
+  "10001": {
+    "duration": 6,
+    "unit": "months",
+    "client": "اشتراك تجريبي - 6 أشهر",
+    "status": "active"
+  },
+  "18001": {
+    "duration": 18,
+    "unit": "months",
+    "client": "اشتراك قياسي - 18 شهر",
+    "status": "active"
+  },
+  "99999": {
+    "duration": 0,
+    "unit": "lifetime",
+    "client": "اشتراك ذهبي دائم - مدى الحياة",
+    "status": "active"
+  }
+}
